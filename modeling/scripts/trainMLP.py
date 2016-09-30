@@ -26,7 +26,7 @@ def main():
 	parser.add_argument('-dropout', type=float, default=0.5)
 	parser.add_argument('-activation', type=str, default='tanh')
 	parser.add_argument('-language_only', type=bool, default= False)
-	parser.add_argument('-num_epochs', type=int, default=100)
+	parser.add_argument('-num_epochs', type=int, default=10)
 	parser.add_argument('-model_save_interval', type=int, default=10)
 	parser.add_argument('-batch_size', type=int, default=128)
 	args = parser.parse_args()
