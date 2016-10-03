@@ -26,7 +26,7 @@ def main():
 	parser.add_argument('-num_hidden_layers_lstm', type=int, default=1)
 	parser.add_argument('-dropout', type=float, default=0.5)
 	parser.add_argument('-activation_mlp', type=str, default='tanh')
-	parser.add_argument('-num_epochs', type=int, default=100)
+	parser.add_argument('-num_epochs', type=int, default=10)
 	parser.add_argument('-model_save_interval', type=int, default=5)
 	parser.add_argument('-batch_size', type=int, default=128)
 	#TODO Feature parser.add_argument('-resume_training', type=str)
@@ -56,7 +56,7 @@ def main():
 	joblib.dump(labelencoder,'../models/labelencoder.pkl')
 	
 	image_model = Sequential()
-	image_model.add(Reshape(input_shape = (img_dim,), dims=(img_dim,)))
+	image_model.add(Reshape((img_dim,), input_shape = (img_dim,)))
 
 	language_model = Sequential()
 	if args.num_hidden_layers_lstm == 1:
@@ -105,8 +105,7 @@ def main():
 		for qu_batch,an_batch,im_batch in zip(grouper(questions_train, args.batch_size, fillvalue=questions_train[-1]), 
 												grouper(answers_train, args.batch_size, fillvalue=answers_train[-1]), 
 												grouper(images_train, args.batch_size, fillvalue=images_train[-1])):
-			timesteps = len(nlp(qu_batch[-1])) #questions sorted in descending order of length
-			X_q_batch = get_questions_tensor_timeseries(qu_batch, nlp, timesteps)
+			X_q_batch = get_questions_tensor_timeseries(qu_batch, nlp, max_len)
 			X_i_batch = get_images_matrix(im_batch, img_map, VGGfeatures)
 			Y_batch = get_answers_matrix(an_batch, labelencoder)
 			loss = model.train_on_batch([X_q_batch, X_i_batch], Y_batch)
